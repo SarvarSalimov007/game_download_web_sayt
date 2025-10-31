@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXA_GAMER_007 | O'yin Yuklab olish</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+.fps-game-wrap {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  margin: 34px auto 18px auto; padding: 13px 0;
+  max-width: 650px; background: #181a2bde;
+  border-radius: 15px; box-shadow: 0 0 30px #00ffe759,0 0.5px 14px #008cff22;
+}
+#cs2d-canvas {
+  display: block; margin: 0 auto; border-radius: 16px;
+  background: radial-gradient(ellipse at 60% 77%,#212528 56%,#132430 100%);
+  box-shadow: 0 0 28px #25fff8aa, 0 0 7px #03d3ffc9;
+  width: 600px; height: 400px;
+}
+@media(max-width:650px){#cs2d-canvas{width:97vw!important;height:64vw!important;max-width:99vw;max-height:91vw;}}
+.fps-banner-section{width:100vw;display:flex;flex-direction:column;align-items:center;margin-bottom:9px;}
+@keyframes redErrorPulse {
+  0% { color: #ff3a3a; text-shadow: 0 0 10px #ff2427f0,0 0 18px #f30747a8; }
+  20% { color: #ff907a; text-shadow: 0 0 22px #fd2b53ef; }
+  40% { color: #ff2424; text-shadow: 0 3px 16px #ff0d70ce,0 0 15px #ff4545; }
+  62% { color: #ff5252; text-shadow: 0 0 26px #ff8484cc; }
+  90% { color: #dd3535; text-shadow: 0 0 17px #ff1c44ab; }
+  100% { color: #ff3a3a; text-shadow: 0 0 10px #ff2427f0,0 0 18px #f30747a8; }
+}
+.error-anim {
+  animation: redErrorPulse 1.44s infinite alternate;
+  font-weight: bold;
+  letter-spacing: 1.25px;
+  font-size: 1.15em;
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+}
+/* Harflar orasidan o'tuvchi scanline chiziqlar */
+@keyframes redScanDown {
+  0% { top: -4px; opacity: .95; }
+  50% { top: .8em; opacity: .5; }
+  100% { top: 1.6em; opacity: 0; }
+}
+@keyframes redScanDown2 {
+  0% { top: -10px; opacity: .75; }
+  50% { top: .4em; opacity: .4; }
+  100% { top: 1.2em; opacity: 0; }
+}
+.error-anim::after,
+.error-anim::before {
+  content: "";
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #ff3a3a 45%, #ffd1d1 50%, #ff3a3a 55%, transparent 100%);
+  filter: blur(.3px);
+  pointer-events: none;
+}
+.error-anim::after { animation: redScanDown 1.6s linear infinite; }
+.error-anim::before { animation: redScanDown2 1.9s linear infinite; height: 3px; }
+.bg-vid-wrap {
+  position: fixed;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-vid {
+  position: absolute;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  object-fit: cover;
+  filter: blur(3px) brightness(0.13) saturate(1.24);
+  opacity: 0.13;
+  pointer-events: none;
+}
+body { position: relative; z-index: 1; }
+/* .cs-neon-btn, .neon-rgb-btn, .profile-save, .download-btn, .site-banner, .genre uchun @keyframes neon-rgb, CSS animatsiya va background gradient, drop-shadow hammasi olib tashlandi.
+Barcha tugma va bannerlar default yoki avvalgi turquoise neon, static gradient holda qoladi.*/
+.cs-neon-btn {
+  margin-bottom: 17px;
+  margin-top: 7px;
+  min-width: 142px;
+  box-shadow: 0 0 38px #00fffcbb, 0 2px 18px #ff00ea77, 0 0 17px #0094ff99;
+}
+</style>
+</head>
+<body id="exa-body" style="background: radial-gradient(ellipse at top, #101824 60%, #06101c 100%); min-height:100vh; margin:0; padding:0;">
+    <canvas id="neon-trail-canvas" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:999"></canvas>
+    <header>
+        <div class="logo-group">
+            <div class="header-profile-flex">
+                <div class="header-avatar">
+                    <img id="header-profile-avatar" src="EXA_GAMER_007.png" alt="Profil avatar"/>
+                </div>
+                <h1 id="header-profile-name">Ismingiz</h1>
+            </div>
+            <span class="slogan">EXA_GAMING O'yinlar Markazi</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input id="auth-username" type="text" placeholder="username" style="padding:7px 9px;border-radius:7px;border:1px solid #00ffe7;background:#141a1c;color:#0ff;" />
+          <input id="auth-password" type="password" placeholder="password" style="padding:7px 9px;border-radius:7px;border:1px solid #00ffe7;background:#141a1c;color:#0ff;" />
+          <button id="auth-login" style="padding:8px 14px;border-radius:9px;border:1px solid #00ffe7;background:#00ffe7;color:#182645;font-weight:700;cursor:pointer;">Kirish</button>
+          <button id="auth-logout" style="display:none;padding:8px 14px;border-radius:9px;border:1px solid #00ffe7;background:#222;color:#0ff;font-weight:700;cursor:pointer;">Chiqish</button>
+        </div>
+        <button id="mode-toggle" aria-label="Light/Dark mode"><span class="icon">🌙</span> <span class="label">Light Mode</span></button>
+    </header>
+    <section class="profile-section">
+        <div class="profile-card">
+            <!-- PROFiL FORM: Ism va rasm preview -->
+<form id="profile-form" style="text-align:center;">
+  <div class="error-anim" style="font-size:2em;margin:35px auto 24px auto;">EXA_GAMER_007</div>
+</form>
+<!-- End of profile preview: summary YO'Q! -->
+<script>
+// Name & avatar faqat kod orqali
+const imgEl = document.getElementById('profile-img');
+const form = document.getElementById('profile-form');
+const summaryBlock = document.getElementById('profile-summary');
+const summaryImg = document.getElementById('profile-summary-img');
+const summaryName = document.getElementById('profile-summary-name');
+const headerName = document.getElementById('header-profile-name');
+const headerAvatar = document.getElementById('header-profile-avatar');
+const CODE_NAME = 'EXA_GAMER_007';
+const CODE_AVATAR = 'EXA_GAMER_007.png';
+// Init: preview va header avatarni koddan o'rnatamiz
+if (headerAvatar) headerAvatar.src = CODE_AVATAR;
+if (headerName) { headerName.textContent = CODE_NAME; headerName.className = 'error-anim'; }
+// Formni ishlatmaymiz, shunchaki yozuv doimiy
+if (form && summaryBlock) { summaryBlock.style.display = 'none'; }
+</script>
+        </div>
+    </section>
+    <main>
+        <h2>O'yinlarni Yuklab Ol</h2>
+        <section class="games">
+            <div class="game-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/3/35/Asphalt_9_-_Legends_logo.png" alt="Asphalt 9: Legends" class="game-img" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://dummyimage.com/234x120/111/fff.png&text=Asphalt+9';" />
+                <div class="game-meta">
+                    <span class="genre">Poyga</span>
+                    <span class="rating">⭐ 4.7</span>
+                </div>
+                <h3>Asphalt 9: Legends</h3>
+                <p class="desc">Yuqori tezlik va neon shahar yo‘llarida hayajonli poyga! 70+ mashina, onlayn musobaqalar va HD grafikalar.</p>
+                <a href="#" class="download-btn">Yuklab olish</a>
+            </div>
+            <div class="game-card">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/PUBG_Mobile_logo.png" alt="PUBG Mobile" class="game-img" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://dummyimage.com/234x120/111/fff.png&text=PUBG+Mobile';" />
+                <div class="game-meta">
+                    <span class="genre">Battle Royale</span>
+                    <span class="rating">⭐ 4.6</span>
+                </div>
+                <h3>PUBG Mobile</h3>
+                <p class="desc">Hayajonli, 100 oʻyinchi bilan jang maydoni! Yirik xaritalar, ko‘plab qurollar va tim ishlash imkoniyati.</p>
+                <a href="#" class="download-btn">Yuklab olish</a>
+            </div>
+            <div class="game-card">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Minecraft_cover.png" alt="Minecraft" class="game-img" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://dummyimage.com/234x120/111/fff.png&text=Minecraft';" />
+                <div class="game-meta">
+                    <span class="genre">Sandbox | Yaratuvchanlik</span>
+                    <span class="rating">⭐ 4.8</span>
+                </div>
+                <h3>Minecraft</h3>
+                <p class="desc">Ochiq dunyo, cheksiz qurilish va sarguzasht. Pixel olamda oʻzingiz dunyo yarating!</p>
+                <a href="#" class="download-btn">Yuklab olish</a>
+            </div>
+            <div class="game-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/6/6a/Genshin_Impact_cover.jpg" alt="Genshin Impact" class="game-img" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://dummyimage.com/234x120/111/fff.png&text=Genshin+Impact';" />
+                <div class="game-meta">
+                    <span class="genre">Action RPG</span>
+                    <span class="rating">⭐ 4.7</span>
+                </div>
+                <h3>Genshin Impact</h3>
+                <p class="desc">Ochiq dunyoda sodir bo‘ladigan sehrli janglar, oynalangan grafika, kuchli syujet!</p>
+                <a href="#" class="download-btn">Yuklab olish</a>
+            </div>
+            <div class="game-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/f/f5/Valorant_logo.svg" alt="Valorant" class="game-img" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://dummyimage.com/234x120/111/fff.png&text=Valorant';" />
+                <div class="game-meta">
+                    <span class="genre">Shooter | FPS</span>
+                    <span class="rating">⭐ 4.5</span>
+                </div>
+                <h3>Valorant</h3>
+                <p class="desc">Takomillashgan komandali o‘yin: qiziqarli xaritalar va strategik janglar! Esport uchun mo‘ljallangan.</p>
+                <a href="#" class="download-btn">Yuklab olish</a>
+            </div>
+            <div class="game-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/0/0c/FIFA_Mobile_logo.png" alt="FIFA Mobile" class="game-img" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://dummyimage.com/234x120/111/fff.png&text=FIFA+Mobile';" />
+                <div class="game-meta">
+                    <span class="genre">Futbol | Sport</span>
+                    <span class="rating">⭐ 4.4</span>
+                </div>
+                <h3>FIFA Mobile</h3>
+                <p class="desc">Onlayn futbol, Real klublar va 50.000-dan oshiq futbolchilar! Turnirlar va yangi nazoratlar.</p>
+                <a href="#" class="download-btn">Yuklab olish</a>
+            </div>
+        </section>
+        <div class="site-banner">
+            <span>⚡ Har kuni yangi o'yinlar | Yuklashlar xavfsiz va bepul! ⚡</span>
+        </div>
+    </main>
+    <!-- 2D SHOOTER Blokini, FPS-banner-section (cs-neon-btn va h2), fps-game-wrap (canvas va stats), va unga tegishli <script> o'yin kodini va boshqalarni olib tashlayman. Barcha html va js o'yin qismlarini butunlay o'chiraman. Faqat qolgan kontent, komentar, tugma va boshqa qismlarni o'zgartirmayman. -->
+    <section class="comments-section">
+        <h3>Sharxlar</h3>
+        <form id="comment-form">
+            <textarea id="new-comment" rows="3" maxlength="220" placeholder="Sharxingizni yozing..." required></textarea>
+            <button class="comment-submit" type="submit">Yuborish</button>
+        </form>
+        <ul id="comments-list"></ul>
+    </section>
+    <footer>
+        <p>&copy; 2025 Salimov Sarvar (EXA_GAMER_007) | Neon Web O'yin yuklab olish</p>
+    </footer>
+    <script>
+// Neon trail: sichqoncha iz va bosishda kichik portlash shariklari
+    (function(){
+  const canvas = document.getElementById('neon-trail-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w = window.innerWidth, h = window.innerHeight;
+  let balls = [];
+  function resize(){ w=window.innerWidth; h=window.innerHeight; canvas.width=w; canvas.height=h; }
+  resize(); window.addEventListener('resize', resize);
+  function rndColor(){ return '#00e5ff'; }
+  function addBall(x,y,o){
+    o=o||{}; balls.push({x,y,r:o.r||12+Math.random()*8,c:o.c||rndColor(),vx:o.vx??(Math.random()-0.5)*3,vy:o.vy??(Math.random()-0.5)*3,a:1});
+  }
+  document.addEventListener('mousemove',e=>{ addBall(e.clientX,e.clientY); });
+  document.addEventListener('mousedown',e=>{
+    for(let i=0;i<18;i++){ const a=Math.random()*Math.PI*2,s=2+Math.random()*3; addBall(e.clientX,e.clientY,{r:14+Math.random()*13,vx:Math.cos(a)*s,vy:Math.sin(a)*s,c:rndColor()}); }
+  });
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(const b of balls){
+      ctx.save(); ctx.globalAlpha=b.a;
+      const g=ctx.createRadialGradient(b.x,b.y,1,b.x,b.y,b.r*1.2);
+      g.addColorStop(0,'#fff'); g.addColorStop(0.12,b.c); g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fillStyle=g; ctx.shadowColor=b.c; ctx.shadowBlur=18; ctx.fill();
+          ctx.restore();
+        }
+      }
+      function update(){
+    for(const b of balls){ b.x+=b.vx; b.y+=b.vy; b.r*=0.987; b.a*=0.965; if(b.r<3) b.a*=0.7; }
+    balls = balls.filter(b=>b.a>0.05);
+  }
+  (function loop(){ update(); draw(); requestAnimationFrame(loop); })();
+})();
+// Placeholder: download coming soon
+(function(){
+  document.querySelectorAll('.download-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      alert('Yuklab olish tez orada!');
+    });
+  });
+})();
+// Local auth + comments persistence (static)
+(function(){
+  const LS_USER='exa_user';
+  const LS_COMMENTS='exa_comments_v1';
+  const usernameEl=document.getElementById('auth-username');
+  const passwordEl=document.getElementById('auth-password');
+  const loginBtn=document.getElementById('auth-login');
+  const logoutBtn=document.getElementById('auth-logout');
+  const commentForm=document.getElementById('comment-form');
+  const newCommentEl=document.getElementById('new-comment');
+  const commentsList=document.getElementById('comments-list');
+  const headerName=document.getElementById('header-profile-name');
+  const headerAvatar=document.getElementById('header-profile-avatar');
+
+  function loadUser(){ try{ return JSON.parse(localStorage.getItem(LS_USER)||'null'); }catch(e){ return null; } }
+  function saveUser(u){ localStorage.setItem(LS_USER, JSON.stringify(u)); }
+  function clearUser(){ localStorage.removeItem(LS_USER); }
+
+  function loadComments(){ try{ return JSON.parse(localStorage.getItem(LS_COMMENTS)||'[]'); }catch(e){ return []; } }
+  function saveComments(arr){ localStorage.setItem(LS_COMMENTS, JSON.stringify(arr)); }
+
+  function renderAuth(){
+    const u=loadUser();
+    if(u){
+      usernameEl.style.display='none';
+      passwordEl.style.display='none';
+      loginBtn.style.display='none';
+      logoutBtn.style.display='inline-block';
+      if(headerName) headerName.textContent=u.username;
+      if(headerAvatar && u.avatar) headerAvatar.src=u.avatar;
+    } else {
+      usernameEl.style.display='inline-block';
+      passwordEl.style.display='inline-block';
+      loginBtn.style.display='inline-block';
+      logoutBtn.style.display='none';
+      if(headerName) headerName.textContent='Ismingiz';
+    }
+  }
+
+  function renderComments(){
+    const data=loadComments();
+    commentsList.innerHTML='';
+    data.forEach((c,i)=>{
+      const li=document.createElement('li');
+      li.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+        <div style="display:flex;flex-direction:column;"> 
+          <strong style="color:#0ff;">${c.user}</strong>
+          <span style="color:#9fe;opacity:.85;font-size:.92em;">${new Date(c.ts).toLocaleString()}</span>
+        </div>
+        ${canDelete(c) ? `<button data-i="${i}" class="del-cmt" style="background:#222;color:#0ff;border:1px solid #00ffe7;border-radius:7px;padding:5px 10px;cursor:pointer;">O'chirish</button>` : ''}
+      </div>
+      <p style="margin:8px 0 0 0;color:#cffff6;">${escapeHtml(c.text)}</p>`;
+      commentsList.appendChild(li);
+    });
+    commentsList.querySelectorAll('.del-cmt').forEach(btn=>{
+      btn.addEventListener('click',function(){
+        const idx=parseInt(this.getAttribute('data-i'));
+        const arr=loadComments();
+        if(!isNaN(idx)){
+          arr.splice(idx,1);
+          saveComments(arr);
+          renderComments();
+        }
+      });
+    });
+  }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m])); }
+  function canDelete(c){ const u=loadUser(); return !!u && u.username===c.user; }
+
+  loginBtn.addEventListener('click', function(){
+    const uname=usernameEl.value.trim();
+    const pwd=passwordEl.value.trim();
+    if(uname.length<3||pwd.length<3){ alert('Username va password kamida 3 ta belgidan iborat bo\'lsin'); return; }
+    const avatar='https://i.pravatar.cc/64?u='+encodeURIComponent(uname);
+    saveUser({username:uname, avatar});
+    usernameEl.value=''; passwordEl.value='';
+    renderAuth();
+  });
+  logoutBtn.addEventListener('click', function(){ clearUser(); renderAuth(); });
+
+  commentForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const u=loadUser();
+    if(!u){ alert('Sharx yozish uchun avval kirish qiling.'); return; }
+    const txt=newCommentEl.value.trim();
+    if(txt.length<2){ alert('Sharx juda qisqa'); return; }
+    const arr=loadComments();
+    arr.unshift({ user:u.username, text:txt, ts: Date.now() });
+    saveComments(arr);
+    newCommentEl.value='';
+    renderComments();
+  });
+
+  renderAuth();
+  renderComments();
+    })();
+    </script>
+</body>
+</html>
