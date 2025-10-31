@@ -88,6 +88,7 @@ Barcha tugma va bannerlar default yoki avvalgi turquoise neon, static gradient h
 </style>
 </head>
 <body id="exa-body" style="background: radial-gradient(ellipse at top, #101824 60%, #06101c 100%); min-height:100vh; margin:0; padding:0;">
+    <canvas id="matrix-canvas" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:-1"></canvas>
     <canvas id="neon-trail-canvas" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:999"></canvas>
     <header>
         <div class="logo-group">
@@ -95,16 +96,11 @@ Barcha tugma va bannerlar default yoki avvalgi turquoise neon, static gradient h
                 <div class="header-avatar">
                     <img id="header-profile-avatar" src="EXA_GAMER_007.png" alt="Profil avatar"/>
                 </div>
-                <h1 id="header-profile-name">Ismingiz</h1>
+                <h1 id="header-profile-name">EXA_GAMER_007</h1>
             </div>
             <span class="slogan">EXA_GAMING O'yinlar Markazi</span>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input id="auth-username" type="text" placeholder="username" style="padding:7px 9px;border-radius:7px;border:1px solid #00ffe7;background:#141a1c;color:#0ff;" />
-          <input id="auth-password" type="password" placeholder="password" style="padding:7px 9px;border-radius:7px;border:1px solid #00ffe7;background:#141a1c;color:#0ff;" />
-          <button id="auth-login" style="padding:8px 14px;border-radius:9px;border:1px solid #00ffe7;background:#00ffe7;color:#182645;font-weight:700;cursor:pointer;">Kirish</button>
-          <button id="auth-logout" style="display:none;padding:8px 14px;border-radius:9px;border:1px solid #00ffe7;background:#222;color:#0ff;font-weight:700;cursor:pointer;">Chiqish</button>
-        </div>
+        
         <button id="mode-toggle" aria-label="Light/Dark mode"><span class="icon">🌙</span> <span class="label">Light Mode</span></button>
     </header>
     <section class="profile-section">
@@ -201,8 +197,8 @@ if (form && summaryBlock) { summaryBlock.style.display = 'none'; }
             <span>⚡ Har kuni yangi o'yinlar | Yuklashlar xavfsiz va bepul! ⚡</span>
         </div>
     </main>
-    <!-- 2D SHOOTER Blokini, FPS-banner-section (cs-neon-btn va h2), fps-game-wrap (canvas va stats), va unga tegishli <script> o'yin kodini va boshqalarni olib tashlayman. Barcha html va js o'yin qismlarini butunlay o'chiraman. Faqat qolgan kontent, komentar, tugma va boshqa qismlarni o'zgartirmayman. -->
-    <section class="comments-section">
+    <!-- Sharxlar bo'limi -->
+    <section class="comments-section" style="position:relative;z-index:1001;">
         <h3>Sharxlar</h3>
         <form id="comment-form">
             <textarea id="new-comment" rows="3" maxlength="220" placeholder="Sharxingizni yozing..." required></textarea>
@@ -256,103 +252,108 @@ if (form && summaryBlock) { summaryBlock.style.display = 'none'; }
     });
   });
 })();
-// Local auth + comments persistence (static)
+// Comments persistence (no auth)
 (function(){
-  const LS_USER='exa_user';
   const LS_COMMENTS='exa_comments_v1';
-  const usernameEl=document.getElementById('auth-username');
-  const passwordEl=document.getElementById('auth-password');
-  const loginBtn=document.getElementById('auth-login');
-  const logoutBtn=document.getElementById('auth-logout');
   const commentForm=document.getElementById('comment-form');
   const newCommentEl=document.getElementById('new-comment');
   const commentsList=document.getElementById('comments-list');
-  const headerName=document.getElementById('header-profile-name');
-  const headerAvatar=document.getElementById('header-profile-avatar');
-
-  function loadUser(){ try{ return JSON.parse(localStorage.getItem(LS_USER)||'null'); }catch(e){ return null; } }
-  function saveUser(u){ localStorage.setItem(LS_USER, JSON.stringify(u)); }
-  function clearUser(){ localStorage.removeItem(LS_USER); }
 
   function loadComments(){ try{ return JSON.parse(localStorage.getItem(LS_COMMENTS)||'[]'); }catch(e){ return []; } }
   function saveComments(arr){ localStorage.setItem(LS_COMMENTS, JSON.stringify(arr)); }
 
-  function renderAuth(){
-    const u=loadUser();
-    if(u){
-      usernameEl.style.display='none';
-      passwordEl.style.display='none';
-      loginBtn.style.display='none';
-      logoutBtn.style.display='inline-block';
-      if(headerName) headerName.textContent=u.username;
-      if(headerAvatar && u.avatar) headerAvatar.src=u.avatar;
-    } else {
-      usernameEl.style.display='inline-block';
-      passwordEl.style.display='inline-block';
-      loginBtn.style.display='inline-block';
-      logoutBtn.style.display='none';
-      if(headerName) headerName.textContent='Ismingiz';
-    }
-  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m])); }
 
   function renderComments(){
     const data=loadComments();
     commentsList.innerHTML='';
-    data.forEach((c,i)=>{
+    data.forEach((c)=>{
       const li=document.createElement('li');
       li.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
         <div style="display:flex;flex-direction:column;"> 
           <strong style="color:#0ff;">${c.user}</strong>
           <span style="color:#9fe;opacity:.85;font-size:.92em;">${new Date(c.ts).toLocaleString()}</span>
         </div>
-        ${canDelete(c) ? `<button data-i="${i}" class="del-cmt" style="background:#222;color:#0ff;border:1px solid #00ffe7;border-radius:7px;padding:5px 10px;cursor:pointer;">O'chirish</button>` : ''}
       </div>
       <p style="margin:8px 0 0 0;color:#cffff6;">${escapeHtml(c.text)}</p>`;
       commentsList.appendChild(li);
     });
-    commentsList.querySelectorAll('.del-cmt').forEach(btn=>{
-      btn.addEventListener('click',function(){
-        const idx=parseInt(this.getAttribute('data-i'));
-        const arr=loadComments();
-        if(!isNaN(idx)){
-          arr.splice(idx,1);
-          saveComments(arr);
-          renderComments();
-        }
-      });
-    });
   }
-
-  function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m])); }
-  function canDelete(c){ const u=loadUser(); return !!u && u.username===c.user; }
-
-  loginBtn.addEventListener('click', function(){
-    const uname=usernameEl.value.trim();
-    const pwd=passwordEl.value.trim();
-    if(uname.length<3||pwd.length<3){ alert('Username va password kamida 3 ta belgidan iborat bo\'lsin'); return; }
-    const avatar='https://i.pravatar.cc/64?u='+encodeURIComponent(uname);
-    saveUser({username:uname, avatar});
-    usernameEl.value=''; passwordEl.value='';
-    renderAuth();
-  });
-  logoutBtn.addEventListener('click', function(){ clearUser(); renderAuth(); });
 
   commentForm.addEventListener('submit', function(e){
     e.preventDefault();
-    const u=loadUser();
-    if(!u){ alert('Sharx yozish uchun avval kirish qiling.'); return; }
     const txt=newCommentEl.value.trim();
     if(txt.length<2){ alert('Sharx juda qisqa'); return; }
     const arr=loadComments();
-    arr.unshift({ user:u.username, text:txt, ts: Date.now() });
+    arr.unshift({ user:'Guest', text:txt, ts: Date.now() });
     saveComments(arr);
     newCommentEl.value='';
     renderComments();
   });
 
-  renderAuth();
   renderComments();
+})();
+    </script>
+    <script>
+// Matrix digital rain (background, 1x speed)
+(function(){
+  const canvas = document.getElementById('matrix-canvas');
+  if(!canvas) return; const ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; initCols(); }
+  let fontSize = 16; let columns = []; let drops = []; let chars;
+  const SPEED = 0.3; // 0.3x speed
+  function initCols(){ const cols = Math.floor(canvas.width / fontSize); columns = new Array(cols).fill(0); drops = columns.map(()=>Math.random()*canvas.height/fontSize); }
+  chars = ('アカサタナハマヤラワ0123456789abcdefghijklmnopqrstuvwxyz').split('');
+  resize(); window.addEventListener('resize', resize);
+  function draw(){
+    const isLight = document.body.classList.contains('light-mode');
+    ctx.fillStyle = isLight ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = isLight ? '#000000' : '#00e5ff';
+    ctx.font = fontSize+'px monospace';
+    for(let i=0;i<columns.length;i++){
+      const text = chars[Math.floor(Math.random()*chars.length)];
+      const x = i*fontSize; const y = drops[i]*fontSize;
+      ctx.fillText(text, x, y);
+      if(y > canvas.height && Math.random() > 0.975){ drops[i] = 0; } else { drops[i] += SPEED; }
+    }
+  }
+  // 0.6x speed
+  (function loop(){ draw(); requestAnimationFrame(loop); })();
+})();
+// Light/Dark mode toggle (restored)
+(function(){
+  const modeToggle = document.getElementById('mode-toggle');
+  const exaBody = document.getElementById('exa-body');
+  if(!modeToggle || !exaBody) return;
+  const icon = modeToggle.querySelector('.icon');
+  const label = modeToggle.querySelector('.label');
+  function setMode(isLight){
+    document.body.classList.toggle('light-mode', isLight);
+    if(isLight){
+      if(icon) icon.textContent = '☀️';
+      if(label) label.textContent = 'Dark Mode';
+      exaBody.style.background = 'radial-gradient(ellipse at top, #eafdff 56%, #b6e1ff 100%)';
+    } else {
+      if(icon) icon.textContent = '🌙';
+      if(label) label.textContent = 'Light Mode';
+      exaBody.style.background = 'radial-gradient(ellipse at top, #101824 60%, #06101c 100%)';
+    }
+  }
+  modeToggle.addEventListener('click', function(){
+    const nowLight = !document.body.classList.contains('light-mode');
+    setMode(nowLight);
+    try{ localStorage.setItem('exa_mode', nowLight ? 'light' : 'dark'); }catch(e){}
+  });
+  try{
+    const saved = localStorage.getItem('exa_mode');
+    setMode(saved === 'light');
+  }catch(e){ setMode(false); }
     })();
     </script>
 </body>
 </html>
+
+</html>
+
+
