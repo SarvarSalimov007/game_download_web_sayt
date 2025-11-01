@@ -32,7 +32,7 @@
 
 ## 🚀 Qanday Ishlatish?
 
-1. **Saytga Kirish** — [exagaming.vercel.app](https://exagaming.vecel.app)!
+1. **Saytga Kirish** — [exagaming.vercel.app](https://exagaming.vercel.app/)!
 
 2. **O'yin Tanlash** — Qiziqtirgan o'yinni toping
 3. **Ma'lumot O'qish** — System requirements va screenshots
