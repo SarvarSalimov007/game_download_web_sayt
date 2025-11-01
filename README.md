@@ -3,7 +3,7 @@
 > **Premium O'yinlar | Yuqori Tezlik | Bepul Yuklab Olish**  
 > Eng so'nggi va mashhur o'yinlarni bir joydan yuklab oling. PC, Mobile, va boshqa platformalar uchun.
 
-![EXAGaming Logo](logo.png)
+![Uploading exagaming.png.png…]()
 
 ---
 
@@ -32,7 +32,8 @@
 
 ## 🚀 Qanday Ishlatish?
 
-1. **Saytga Kirish** — [exagaming.com](https://exagaming.com)
+1. **Saytga Kirish** — [exagaming.vercel.app](https://exagaming.vecel.app)!
+
 2. **O'yin Tanlash** — Qiziqtirgan o'yinni toping
 3. **Ma'lumot O'qish** — System requirements va screenshots
 4. **Yuklab Olish** — "Download" tugmasini bosing
