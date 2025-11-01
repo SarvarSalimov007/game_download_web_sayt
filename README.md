@@ -53,6 +53,88 @@
 - **Android**: 6.0+ (API level 23+)
 - **iOS**: 12.0 yoki yuqori versiya
 
+
+## 🔒 Xavfsizlik
+
+- ✅ Barcha o'yinlar virus tekshiruvidan o'tadi
+- ✅ Malware va spyware himoyasi
+- ✅ Shaxsiy ma'lumotlaringiz xavfsiz
+- ✅ SSL sertifikat bilan himoyalangan
+
+---
+
+## 📊 Statistikalar
+
+- 🎮 **10,000+** O'yinlar
+- 👥 **50,000+** Foydalanuvchilar
+- ⬇️ **1M+** Yuklab olishlar
+- 🌍 **50+** Mamlakatlar
+
+---
+
+## 🛠️ Texnologiyalar
+
+- **Frontend**: HTML5, CSS3, JavaScript, React
+- **Backend**: Node.js, Express, MongoDB
+- **Storage**: AWS S3, Cloudflare CDN
+- **Security**: SSL/TLS, DDoS Protection
+
+---
+
+## 📞 Aloqa va Yordam
+
+- 🌐 **Website**: [exagaming.com](https://exagaming.vercel.app/)
+- 📧 **Email**: support@exagaming.com
+- 💬 **Telegram**: [@exagaming_support](https://t.me/https://exagaming.vercel.app/)
+- 📱 **Discord**: [EXAGaming Community](https://discord/https://exagaming.vercel.app/)
+
+---
+
+## ❓ FAQ
+
+**Q: O'yinlar bepulmi?**  
+A: Ha, barcha o'yinlar bepul yuklab olinadi.
+
+**Q: Virus bor yoki yo'qmi?**  
+A: Yo'q, barcha o'yinlar virus tekshiruvidan o'tadi.
+
+**Q: Qanday o'yinlar qo'shiladi?**  
+A: Haftada bir necha marta yangi o'yinlar qo'shiladi.
+
+**Q: Mobile o'yinlar bor yoki yo'qmi?**  
+A: Ha, Android va iOS uchun o'yinlar mavjud.
+
+---
+
+## 📝 Lisensiya va Mualliflik Huquqlari
+
+Barcha o'yinlar ularning mualliflari va nashriyotlari tomonidan boshqariladi. EXAGAMING faqat yuklab olish platformasi sifatida xizmat qiladi.
+
+---
+
+## 🤝 Hissa Qo'shish
+
+Agar sizda:
+- 📝 O'yin ko'rsatmalari
+- 🐛 Xatoliklar haqida ma'lumot
+- 💡 Takliflar
+
+bo'lsa, biz bilan bog'laning!
+
+---
+
+## ⭐ Yulduzcha Qoldiring!
+
+Agar sayt sizga yoqsa, GitHub'da yulduzcha qoldiring ⭐
+
+---
+
+<p align="center">
+  Made with ❤️ by EXAGaming Team
+</p>
+<p align="center">
+  © 2024 EXAGaming. Barcha huquqlar himoyalangan.
+</p>
 ---
 
 ## 📥 Yuklab Olish Ko'rsatmalari
