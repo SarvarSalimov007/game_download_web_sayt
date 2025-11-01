@@ -65,7 +65,7 @@
 
 ## 📊 Statistikalar
 
-- 🎮 **10,000+** O'yinlar
+- 🎮 **6** O'yinlar
 - 👥 **50,000+** Foydalanuvchilar
 - ⬇️ **1M+** Yuklab olishlar
 - 🌍 **50+** Mamlakatlar
